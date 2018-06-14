@@ -11,7 +11,7 @@ import Alamofire
 import SwiftyJSON
 import CoreLocation
 
-class ViewController: UIViewController, CLLocationManagerDelegate {
+class DoctorsViewController: UIViewController, CLLocationManagerDelegate {
 
     //------------------------------------------------------------------------------------
     //MARK - API requirements
@@ -98,6 +98,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                         newDoctor.imageURL = imageURL
                     }
 
+                    print(newDoctor.name)
+                    print(newDoctor.address)
+                    print(newDoctor.description)
+                    print("================\n\n")
+                    
                     // Append new doctor to [Doctor]
                     doctorsArray.append(newDoctor)
                 }

@@ -7,5 +7,6 @@ target 'My Doctors' do
   # Pods for My Doctors
   pod 'Alamofire'
   pod 'SwiftyJSON'
+  pod 'TextFieldEffects'
 
 end
