@@ -11,10 +11,34 @@ import Alamofire
 import SwiftyJSON
 import CoreLocation
 
-class DoctorsViewController: UIViewController, CLLocationManagerDelegate {
+class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate {
+    
 
     //------------------------------------------------------------------------------------
+    //MARK - Declare Views
+    let searchBarContainerView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor(red: 153/255, green: 173/255, blue: 255/255, alpha: 0.5)
+        
+        return view
+    }()
+    
+    let searchTextField: UITextField = {
+        let textField = UITextField()
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.placeholder = "  Search by zipcode "
+        textField.font = UIFont(name: "Menlo-Regular", size: 16)
+        textField.backgroundColor = UIColor.white
+
+        
+        
+        return textField
+    }()
+    
+    //------------------------------------------------------------------------------------
     //MARK - API requirements
+    //https://developer.betterdoctor.com/documentation15#/
     let url = "https://api.betterdoctor.com/2016-03-01/practices"
     let apiKey = "534c28f7bb1bea633e0ea1ad14594904"
     var params: [String: String] = [:]
@@ -30,9 +54,48 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate {
         // Assign locationManager delegate to this ViewController, whenInUse, and startUpdating
         startLocationManager()
         
+        // UISetup
+        setupUI()
     }
 
+    //------------------------------------------------------------------------------------
+    //MARK - Setup Views
+    private func setupUI(){
+        // Top container
+        view.addSubview(searchBarContainerView)
+        searchBarContainerView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        searchBarContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        searchBarContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        searchBarContainerView.heightAnchor.constraint(equalToConstant: 135).isActive = true
+        
+        // Embeded search textfield in top container
+        view.addSubview(searchTextField)
+        searchTextField.bottomAnchor.constraint(equalTo: searchBarContainerView.bottomAnchor, constant: -8).isActive = true
+        searchTextField.trailingAnchor.constraint(equalTo: searchBarContainerView.trailingAnchor, constant: -35).isActive = true
+        searchTextField.leadingAnchor.constraint(equalTo: searchBarContainerView.leadingAnchor, constant: 35).isActive = true
+        searchTextField.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        // Rounded corners for textfield
+        searchTextField.layoutIfNeeded()
+        searchTextField.layer.cornerRadius = searchTextField.frame.size.height / 2
+        searchTextField.layer.masksToBounds = true
+        
+        
+
+    }
     
+    //------------------------------------------------------------------------------------
+    //MARK - TableView Delegate Methods
+    
+    
+    //------------------------------------------------------------------------------------
+    //MARK - TableView Datasource Methods
+//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        return 3
+//    }
+//    
+//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        print("")
+//    }
     
     //------------------------------------------------------------------------------------
     //MARK - Networking
@@ -74,7 +137,10 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate {
             // Only parse the JSON if there is a doctor in the clinic
             if numberOfDoctors > 0 {
                 for j in 0...numberOfDoctors - 1 {
+                    
                     // Doctor Bio
+                    // Note: Is there a better way to do this?
+                    // Maybe GraphQL: https://www.raywenderlich.com/158433/getting-started-graphql-apollo-ios
                     let clinic = json["data"][i]["name"].string
                     let firstName = json["data"][i]["doctors"][j]["profile"]["first_name"].string
                     let lastName = json["data"][i]["doctors"][j]["profile"]["last_name"].string
@@ -97,7 +163,8 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate {
                     if let imageURL = json["data"][i]["doctors"][j]["profile"]["image_url"].string {
                         newDoctor.imageURL = imageURL
                     }
-
+                    
+                    // Testing
                     print(newDoctor.name)
                     print(newDoctor.address)
                     print(newDoctor.description)
@@ -122,6 +189,7 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate {
         
         // Conditional to check if location is valid using "horizontalAccuracy".  If valid then stop
         // updating location (save's user battery and better UX), store user location, and unassign delegate.
+        // https://www.reddit.com/r/swift/comments/517862/what_should_the_horizontal_accuracy_be_for_core/
         if location.horizontalAccuracy > 0 {
             locationManager.stopUpdatingLocation()
             locationManager.delegate = nil
@@ -133,14 +201,18 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate {
             let userLocation = latitude + "," + longitude
             
             params = ["location": location, "user_location": userLocation, "user_key": apiKey]
+            
+            // Use our location latitude and longitude as parameter for our API call
             getDoctorListing(url: url, parameters: params)
         }
-        
-        
     }
     
+    // Catches an error and alert user of what type of error
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print(error)
+        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+        let action = UIAlertAction(title: "Okay", style: .default, handler: nil)
+        alert.addAction(action)
+        self.present(alert, animated: true, completion: nil)
     }
     
     func startLocationManager(){

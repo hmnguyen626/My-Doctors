@@ -8,5 +8,9 @@ target 'My Doctors' do
   pod 'Alamofire'
   pod 'SwiftyJSON'
   pod 'TextFieldEffects'
+  pod 'Firebase'
+  pod 'Firebase/Auth'
+  pod 'Firebase/Database'
+  pod 'SVProgressHUD'
 
 end

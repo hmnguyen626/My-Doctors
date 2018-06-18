@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>349386766980-tcjp2g0jlfemt2el3qt9rao7dpf62p28.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.349386766980-tcjp2g0jlfemt2el3qt9rao7dpf62p28</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCjXii0Z8HouEmli8g8tja0F1gUI7LTEL4</string>
+	<key>GCM_SENDER_ID</key>
+	<string>349386766980</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.hmdev.My-Doctors</string>
+	<key>PROJECT_ID</key>
+	<string>my-doctors-37185</string>
+	<key>STORAGE_BUCKET</key>
+	<string>my-doctors-37185.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true></true>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:349386766980:ios:676f826cd959799f</string>
+	<key>DATABASE_URL</key>
+	<string>https://my-doctors-37185.firebaseio.com</string>
+</dict>
+</plist>

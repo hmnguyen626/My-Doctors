@@ -8,19 +8,61 @@
 
 import UIKit
 
-class DashboardNavigationController: UINavigationController {
+class DashboardViewController: UIViewController {
 
+    //--------------------------------------------------------------------------------------------
+    //MARK - Declare views
+    let topContainer: UIView = {
+        let view = UIView()
+        
+        
+        return view
+    }()
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        
+        setupView()
+        
+        
     }
     
+    // Why lazy var is needed: Declare Completely Outside viewDidLoad()
+    // https://stackoverflow.com/questions/40392617/swift-3-0-uibarbuttonitem-action-not-work
+    lazy var searchBarButton: UIBarButtonItem = {
+        let barButtonItem = UIBarButtonItem(title: "Search", style: .plain, target: self, action: #selector(barButtonAction))
+        barButtonItem.tag = 1
+        
+        return barButtonItem
+    }()
 
-
+    
+    //--------------------------------------------------------------------------------------------
+    //MARK - UISETUP
+    private func setupView(){
+        view.backgroundColor = UIColor(red: 153/255, green: 179/255, blue: 255/255, alpha: 1)
+        
+        self.navigationItem.rightBarButtonItem = searchBarButton
+        
+    }
+    
+    //--------------------------------------------------------------------------------------------
+    //MARK - Actions
+    @objc func barButtonAction(sender: UIBarButtonItem){
+        if sender.tag == 1 {
+            
+            // Testing - Perform segue
+            // Suggested:  Use protocol/delegate to send data backwards
+            self.performSegue(withIdentifier: "goToDoctorsID", sender: self)
+            
+        } else {
+            print("Testing")
+        }
+        
+        
+    }
+    
 }
