@@ -10,8 +10,8 @@
 		10B77E8A0D07F71A2D88EE73 /* Pods_My_Doctors.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5832AD724FD2210726E11358 /* Pods_My_Doctors.framework */; };
 		A01B210620D32B4600CF3C93 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A01B210520D32B4600CF3C93 /* GoogleService-Info.plist */; };
 		A01B210820D3663A00CF3C93 /* RegisterNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01B210720D3663A00CF3C93 /* RegisterNavigationController.swift */; };
-		A039EC4B20D862840010B53E /* DoctorInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A039EC4920D862840010B53E /* DoctorInformation.swift */; };
-		A039EC4C20D862840010B53E /* DoctorInformation.xib in Resources */ = {isa = PBXBuildFile; fileRef = A039EC4A20D862840010B53E /* DoctorInformation.xib */; };
+		A039EC5320D987360010B53E /* DoctorInformationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A039EC5120D987360010B53E /* DoctorInformationCell.swift */; };
+		A039EC5420D987360010B53E /* DoctorInformationCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A039EC5220D987360010B53E /* DoctorInformationCell.xib */; };
 		A03A12D820D0839700F84688 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A03A12D720D0839700F84688 /* AppDelegate.swift */; };
 		A03A12DA20D0839700F84688 /* DoctorsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A03A12D920D0839700F84688 /* DoctorsViewController.swift */; };
 		A03A12DD20D0839700F84688 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A03A12DB20D0839700F84688 /* Main.storyboard */; };
@@ -27,8 +27,8 @@
 		5832AD724FD2210726E11358 /* Pods_My_Doctors.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_My_Doctors.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A01B210520D32B4600CF3C93 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A01B210720D3663A00CF3C93 /* RegisterNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterNavigationController.swift; sourceTree = "<group>"; };
-		A039EC4920D862840010B53E /* DoctorInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorInformation.swift; sourceTree = "<group>"; };
-		A039EC4A20D862840010B53E /* DoctorInformation.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DoctorInformation.xib; sourceTree = "<group>"; };
+		A039EC5120D987360010B53E /* DoctorInformationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorInformationCell.swift; sourceTree = "<group>"; };
+		A039EC5220D987360010B53E /* DoctorInformationCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DoctorInformationCell.xib; sourceTree = "<group>"; };
 		A03A12D420D0839700F84688 /* My Doctors.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "My Doctors.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A03A12D720D0839700F84688 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A03A12D920D0839700F84688 /* DoctorsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorsViewController.swift; sourceTree = "<group>"; };
@@ -65,8 +65,8 @@
 		A039EC4820D862390010B53E /* Custom Cell */ = {
 			isa = PBXGroup;
 			children = (
-				A039EC4920D862840010B53E /* DoctorInformation.swift */,
-				A039EC4A20D862840010B53E /* DoctorInformation.xib */,
+				A039EC5120D987360010B53E /* DoctorInformationCell.swift */,
+				A039EC5220D987360010B53E /* DoctorInformationCell.xib */,
 			);
 			path = "Custom Cell";
 			sourceTree = "<group>";
@@ -202,11 +202,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A039EC4C20D862840010B53E /* DoctorInformation.xib in Resources */,
 				A03A12E220D0839C00F84688 /* LaunchScreen.storyboard in Resources */,
 				A01B210620D32B4600CF3C93 /* GoogleService-Info.plist in Resources */,
 				A03A12DF20D0839C00F84688 /* Assets.xcassets in Resources */,
 				A03A12DD20D0839700F84688 /* Main.storyboard in Resources */,
+				A039EC5420D987360010B53E /* DoctorInformationCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,9 +285,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A039EC4B20D862840010B53E /* DoctorInformation.swift in Sources */,
 				A01B210820D3663A00CF3C93 /* RegisterNavigationController.swift in Sources */,
 				A090310820D20CCB00B7F515 /* DashboardNavigationController.swift in Sources */,
+				A039EC5320D987360010B53E /* DoctorInformationCell.swift in Sources */,
 				A03A12DA20D0839700F84688 /* DoctorsViewController.swift in Sources */,
 				A03A12D820D0839700F84688 /* AppDelegate.swift in Sources */,
 				A090310420D1FDE000B7F515 /* LoginViewController.swift in Sources */,

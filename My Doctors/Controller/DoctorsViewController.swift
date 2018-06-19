@@ -11,7 +11,7 @@ import Alamofire
 import SwiftyJSON
 import CoreLocation
 
-class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate {
+class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource {
     
 
     //------------------------------------------------------------------------------------
@@ -24,16 +24,35 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         return view
     }()
     
+    let searchTextFieldContainer: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.white
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
     let searchTextField: UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.placeholder = "  Search by zipcode "
-        textField.font = UIFont(name: "Menlo-Regular", size: 16)
+        textField.font = UIFont(name: "Menlo-Regular", size: 14)
         textField.backgroundColor = UIColor.white
+        textField.keyboardType = .decimalPad
 
-        
-        
         return textField
+    }()
+    
+    let doctorsTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        tableView.rowHeight = 150
+        
+        // Register our custom cell
+        tableView.register(UINib(nibName: "DoctorInformationCell", bundle: nil), forCellReuseIdentifier: "customDoctorCell")
+        
+        return tableView
     }()
     
     //------------------------------------------------------------------------------------
@@ -54,6 +73,10 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         // Assign locationManager delegate to this ViewController, whenInUse, and startUpdating
         startLocationManager()
         
+        // Tableview delegates
+        doctorsTableView.delegate = self
+        doctorsTableView.dataSource = self
+        
         // UISetup
         setupUI()
     }
@@ -61,26 +84,42 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
     //------------------------------------------------------------------------------------
     //MARK - Setup Views
     private func setupUI(){
-        // Top container
+        // Search bar container
         view.addSubview(searchBarContainerView)
         searchBarContainerView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         searchBarContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         searchBarContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         searchBarContainerView.heightAnchor.constraint(equalToConstant: 135).isActive = true
         
-        // Embeded search textfield in top container
+        // Textfield container that has rounded corners
+        view.addSubview(searchTextFieldContainer)
+        searchTextFieldContainer.bottomAnchor.constraint(equalTo: searchBarContainerView.bottomAnchor, constant: -9).isActive = true
+        searchTextFieldContainer.trailingAnchor.constraint(equalTo: searchBarContainerView.trailingAnchor, constant: -100).isActive = true
+        searchTextFieldContainer.leadingAnchor.constraint(equalTo: searchBarContainerView.leadingAnchor, constant: 15).isActive = true
+        searchTextFieldContainer.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        searchTextFieldContainer.layoutIfNeeded()
+        searchTextFieldContainer.layer.cornerRadius = searchTextFieldContainer.frame.size.height / 2
+        searchTextFieldContainer.layer.masksToBounds = true
+        
+        // Search textfield within searchBarContainerView
         view.addSubview(searchTextField)
-        searchTextField.bottomAnchor.constraint(equalTo: searchBarContainerView.bottomAnchor, constant: -8).isActive = true
-        searchTextField.trailingAnchor.constraint(equalTo: searchBarContainerView.trailingAnchor, constant: -35).isActive = true
-        searchTextField.leadingAnchor.constraint(equalTo: searchBarContainerView.leadingAnchor, constant: 35).isActive = true
-        searchTextField.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        // Rounded corners for textfield
+        searchTextField.bottomAnchor.constraint(equalTo: searchTextFieldContainer.bottomAnchor, constant: 0).isActive = true
+        searchTextField.topAnchor.constraint(equalTo: searchTextFieldContainer.topAnchor, constant: 0).isActive = true
+        searchTextField.trailingAnchor.constraint(equalTo: searchTextFieldContainer.trailingAnchor, constant: -10).isActive = true
+        searchTextField.leadingAnchor.constraint(equalTo: searchTextFieldContainer.leadingAnchor, constant: 10).isActive = true
         searchTextField.layoutIfNeeded()
-        searchTextField.layer.cornerRadius = searchTextField.frame.size.height / 2
+        searchTextField.layer.cornerRadius = searchTextField.frame.size.height / 5
         searchTextField.layer.masksToBounds = true
-        
-        
 
+        
+        // Doctor tableview
+        view.addSubview(doctorsTableView)
+        doctorsTableView.topAnchor.constraint(equalTo: searchBarContainerView.bottomAnchor, constant: 0).isActive = true
+        doctorsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
+        doctorsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
+        doctorsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+        
+        
     }
     
     //------------------------------------------------------------------------------------
@@ -89,13 +128,22 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
     
     //------------------------------------------------------------------------------------
     //MARK - TableView Datasource Methods
-//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return 3
-//    }
-//    
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        print("")
-//    }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return doctorsArray.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = doctorsTableView.dequeueReusableCell(withIdentifier: "customDoctorCell", for: indexPath) as! DoctorInformationCell
+        
+        //cell.doctorNameLabel.text = doctorsArray[indexPath.row].name
+        
+        if let imageData = doctorsArray[indexPath.row].imageData {
+            cell.doctorPhotoImageView.image = UIImage(data: imageData)
+
+        }
+
+        return cell
+    }
     
     //------------------------------------------------------------------------------------
     //MARK - Networking
@@ -140,7 +188,7 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
                     
                     // Doctor Bio
                     // Note: Is there a better way to do this?
-                    // Maybe GraphQL: https://www.raywenderlich.com/158433/getting-started-graphql-apollo-ios
+                    // Maybe GraphQL if allowed: https://www.raywenderlich.com/158433/getting-started-graphql-apollo-ios
                     let clinic = json["data"][i]["name"].string
                     let firstName = json["data"][i]["doctors"][j]["profile"]["first_name"].string
                     let lastName = json["data"][i]["doctors"][j]["profile"]["last_name"].string
@@ -164,21 +212,50 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
                         newDoctor.imageURL = imageURL
                     }
                     
-                    // Testing
-                    print(newDoctor.name)
-                    print(newDoctor.address)
-                    print(newDoctor.description)
-                    print("================\n\n")
+                    // Downloads the image's data from imageURL
+                    getImageData(doctor: newDoctor)
                     
                     // Append new doctor to [Doctor]
                     doctorsArray.append(newDoctor)
                 }
             }
         }
+        
+        // Reloads our tableview data once we have parsed the JSON object from our API and store data into our cells
+        doctorsTableView.reloadData()
+    }
+    
+    //------------------------------------------------------------------------------------
+    //MARK - Get ImageData from ImageURL and set doctor object imageData property
+    func getImageData(doctor: Doctor){
+        
+        // Set UIImageView image property from a url
+        // Link - https://stackoverflow.com/questions/39813497/swift-3-display-image-from-url
+        if let photoURL = URL(string: doctor.imageURL!) {
+            
+            // Information on sessions
+            // Link - https://developer.apple.com/reference/foundation/urlsessionconfiguration
+            let session = URLSession(configuration: .default)
+            
+            let downloadImage = session.dataTask(with: photoURL) {
+                (data, response, error) in
+                
+                if error != nil {
+                    print(error!)
+                } else {
+                    if let imageData = data {
+                        doctor.imageData = imageData
+                    }
+                }
+            }
+            // Call resume on download task - Task objects are always created in a suspended state and
+            // must be sent the -resume message before they will execute. **FROM DEFINITION :)**
+            downloadImage.resume()
+            
+        }
     }
     
 
-    
     
     //------------------------------------------------------------------------------------
     //MARK - Location manager delegate methods

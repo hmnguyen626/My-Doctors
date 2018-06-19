@@ -22,6 +22,7 @@ class Doctor {
     var distance: Float = 0
     // Doctor might not have an imageURL
     var imageURL: String?
+    var imageData: Data?
     
     init(){
         self.clinic = nil
