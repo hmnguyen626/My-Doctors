@@ -15,11 +15,15 @@ class Doctor {
     var description: String = ""
     var clinic: String?
     var address: String = ""
+    var specialty: String = ""
     var acceptingNewPatients : Bool?
     var languages: [String] = []
     
     // Api returns distance in miles
-    var distance: Float = 0
+    var distance: Int = 0
+    var latitude: Float = 0.0
+    var longitude: Float = 0.0
+    
     // Doctor might not have an imageURL
     var imageURL: String?
     var imageData: Data?
@@ -31,7 +35,7 @@ class Doctor {
     }
     
     convenience init(fName: String, lName: String, gender: String, title: String,
-         description: String, clinic: String, address: String, accept: Bool){
+                     description: String, clinic: String, address: String, specialty: String, accept: Bool, lat: Float, long: Float){
         self.init()
         
         
@@ -42,6 +46,9 @@ class Doctor {
         self.clinic = clinic
         self.address = address
         self.acceptingNewPatients = accept
+        self.specialty = specialty
+        self.latitude = lat
+        self.longitude = long
     }
     
 }

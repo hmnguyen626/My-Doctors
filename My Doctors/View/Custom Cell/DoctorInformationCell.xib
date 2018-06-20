@@ -12,14 +12,108 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="customDoctorCell" id="KGk-i7-Jjw" customClass="DoctorInformationCell" customModule="My_Doctors" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+        <tableViewCell alpha="0.5" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="customDoctorCell" id="KGk-i7-Jjw" customClass="DoctorInformationCell" customModule="My_Doctors" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="360" height="200"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="360" height="199.5"/>
                 <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="V7L-WQ-TjM">
+                        <rect key="frame" x="15" y="19" width="330" height="160"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="XZ9-Iq-Fu4">
+                                <rect key="frame" x="8" y="8" width="75" height="75"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="75" id="79m-JG-K20"/>
+                                    <constraint firstAttribute="height" constant="75" id="9UA-VX-t33"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name, Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hQY-pW-lRU">
+                                <rect key="frame" x="98" y="3" width="217" height="25"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="25" id="8lt-5A-6jT"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Menlo-Bold" family="Menlo" pointSize="17"/>
+                                <color key="textColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Gender, Speciality" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ocv-4Y-abu">
+                                <rect key="frame" x="98" y="31" width="217" height="15"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="15" id="hD6-kh-4xA"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Menlo-Regular" family="Menlo" pointSize="15"/>
+                                <color key="textColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Location" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="I6D-fX-Vj7">
+                                <rect key="frame" x="98" y="51" width="217" height="15"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="15" id="RSM-iM-l9e"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Menlo-Regular" family="Menlo" pointSize="15"/>
+                                <color key="textColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dWk-f4-AbU">
+                                <rect key="frame" x="8" y="91" width="314" height="61"/>
+                                <fontDescription key="fontDescription" name="Menlo-Italic" family="Menlo" pointSize="12"/>
+                                <color key="textColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Distance" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MMf-lW-pUT">
+                                <rect key="frame" x="98" y="71" width="217" height="15"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="15" id="Ibb-6t-EiH"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Menlo-Regular" family="Menlo" pointSize="15"/>
+                                <color key="textColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="0.48852883163689437" green="0.55680089983669856" blue="0.82737151015228427" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="tintColor" red="0.15027447711752859" green="0.20515165201701205" blue="0.82737151015228427" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="I6D-fX-Vj7" secondAttribute="trailing" constant="15" id="228-hv-s9A"/>
+                            <constraint firstItem="dWk-f4-AbU" firstAttribute="top" secondItem="MMf-lW-pUT" secondAttribute="bottom" constant="5" id="4ZS-OJ-Rru"/>
+                            <constraint firstItem="I6D-fX-Vj7" firstAttribute="top" secondItem="Ocv-4Y-abu" secondAttribute="bottom" constant="5" id="5jU-Nn-oVB"/>
+                            <constraint firstItem="dWk-f4-AbU" firstAttribute="leading" secondItem="V7L-WQ-TjM" secondAttribute="leading" constant="8" id="60P-uH-vkB"/>
+                            <constraint firstAttribute="height" constant="160" id="BHJ-AO-Lwf"/>
+                            <constraint firstItem="hQY-pW-lRU" firstAttribute="leading" secondItem="XZ9-Iq-Fu4" secondAttribute="trailing" constant="15" id="CfS-zV-FdD"/>
+                            <constraint firstItem="I6D-fX-Vj7" firstAttribute="leading" secondItem="XZ9-Iq-Fu4" secondAttribute="trailing" constant="15" id="EYG-ft-PW4"/>
+                            <constraint firstItem="hQY-pW-lRU" firstAttribute="top" secondItem="V7L-WQ-TjM" secondAttribute="top" constant="3" id="Ic0-sY-Ymx"/>
+                            <constraint firstAttribute="trailing" secondItem="dWk-f4-AbU" secondAttribute="trailing" constant="8" id="IeB-V6-ji8"/>
+                            <constraint firstAttribute="trailing" secondItem="Ocv-4Y-abu" secondAttribute="trailing" constant="15" id="NdR-Sz-NgC"/>
+                            <constraint firstItem="MMf-lW-pUT" firstAttribute="top" secondItem="I6D-fX-Vj7" secondAttribute="bottom" constant="5" id="Ten-QM-97h"/>
+                            <constraint firstAttribute="trailing" secondItem="MMf-lW-pUT" secondAttribute="trailing" constant="15" id="YsU-2T-EFp"/>
+                            <constraint firstAttribute="trailing" secondItem="hQY-pW-lRU" secondAttribute="trailing" constant="15" id="ZmZ-GQ-o16"/>
+                            <constraint firstItem="XZ9-Iq-Fu4" firstAttribute="leading" secondItem="V7L-WQ-TjM" secondAttribute="leading" constant="8" id="bfH-cy-8db"/>
+                            <constraint firstItem="Ocv-4Y-abu" firstAttribute="leading" secondItem="XZ9-Iq-Fu4" secondAttribute="trailing" constant="15" id="cZI-w5-CF3"/>
+                            <constraint firstItem="Ocv-4Y-abu" firstAttribute="top" secondItem="hQY-pW-lRU" secondAttribute="bottom" constant="3" id="hmN-E2-YDh"/>
+                            <constraint firstItem="XZ9-Iq-Fu4" firstAttribute="top" secondItem="V7L-WQ-TjM" secondAttribute="top" constant="8" id="s0s-Q1-WWg"/>
+                            <constraint firstAttribute="bottom" secondItem="dWk-f4-AbU" secondAttribute="bottom" constant="8" id="sck-Lb-TOZ"/>
+                            <constraint firstAttribute="width" constant="330" id="sgc-mA-gHO"/>
+                            <constraint firstItem="MMf-lW-pUT" firstAttribute="leading" secondItem="XZ9-Iq-Fu4" secondAttribute="trailing" constant="15" id="t9n-D7-aOw"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="V7L-WQ-TjM" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="hJg-Fw-Shq"/>
+                    <constraint firstItem="V7L-WQ-TjM" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="vfl-9q-JPp"/>
+                </constraints>
             </tableViewCellContentView>
+            <color key="backgroundColor" red="0.59999999999999998" green="0.67843137254901964" blue="1" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="containerView" destination="V7L-WQ-TjM" id="dbP-N8-fKB"/>
+                <outlet property="descriptionLabel" destination="dWk-f4-AbU" id="3Fr-OD-hvp"/>
+                <outlet property="distanceLabel" destination="MMf-lW-pUT" id="5Di-AF-bMA"/>
+                <outlet property="doctorImageView" destination="XZ9-Iq-Fu4" id="2lO-ho-wJ1"/>
+                <outlet property="doctorNameLabel" destination="hQY-pW-lRU" id="5QA-JG-Mvn"/>
+                <outlet property="locationLabel" destination="I6D-fX-Vj7" id="dw3-8O-xxv"/>
+                <outlet property="specialtyLabel" destination="Ocv-4Y-abu" id="Gh1-j2-Vei"/>
+            </connections>
         </tableViewCell>
     </objects>
 </document>

@@ -11,11 +11,10 @@ import Alamofire
 import SwiftyJSON
 import CoreLocation
 
-class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource {
+class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate  {
     
-
     //------------------------------------------------------------------------------------
-    //MARK - Declare Views
+    //MARK - Views
     let searchBarContainerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -47,7 +46,7 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
-        tableView.rowHeight = 150
+        tableView.rowHeight = 200
         
         // Register our custom cell
         tableView.register(UINib(nibName: "DoctorInformationCell", bundle: nil), forCellReuseIdentifier: "customDoctorCell")
@@ -55,16 +54,34 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         return tableView
     }()
     
+    let searchButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Search", for: .normal)
+        button.backgroundColor = UIColor(red: 153/255, green: 173/255, blue: 255/255, alpha: 0.5)
+        button.titleLabel?.font = UIFont(name: "Menlo-Regular", size: 15)
+        
+        // Action
+        button.addTarget(self, action: #selector(searchButtonPressed), for: .touchUpInside)
+        button.tag = 1
+        
+        return button
+    }()
+    
     //------------------------------------------------------------------------------------
     //MARK - API requirements
     //https://developer.betterdoctor.com/documentation15#/
-    let url = "https://api.betterdoctor.com/2016-03-01/practices"
-    let apiKey = "534c28f7bb1bea633e0ea1ad14594904"
-    var params: [String: String] = [:]
-    var doctorsJSON = JSON()
+    let docUrl = "https://api.betterdoctor.com/2016-03-01/practices"
+    let docApiKey = "534c28f7bb1bea633e0ea1ad14594904"
     
-    // Instance variables
+    //https://www.zipcodeapi.com/API
+    let zipUrl = "https://www.zipcodeapi.com/rest"
+    let zipApiKey = "IvoPuX3RLG8ycre4ABkWfAajUz8lBt0bVpQqlnLe4WXPzJEJIikc4Hq3HwyCtVJ4"
+    
+
+    // Local Variables
     let locationManager = CLLocationManager()
+    var userLocation = ""
     var doctorsArray = [Doctor]()
     
     override func viewDidLoad() {
@@ -77,12 +94,15 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         doctorsTableView.delegate = self
         doctorsTableView.dataSource = self
         
+        // Textfield delegates
+        searchTextField.delegate = self
+        
         // UISetup
         setupUI()
     }
 
     //------------------------------------------------------------------------------------
-    //MARK - Setup Views
+    //MARK - Setup views and their constraints
     private func setupUI(){
         // Search bar container
         view.addSubview(searchBarContainerView)
@@ -95,7 +115,7 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         view.addSubview(searchTextFieldContainer)
         searchTextFieldContainer.bottomAnchor.constraint(equalTo: searchBarContainerView.bottomAnchor, constant: -9).isActive = true
         searchTextFieldContainer.trailingAnchor.constraint(equalTo: searchBarContainerView.trailingAnchor, constant: -100).isActive = true
-        searchTextFieldContainer.leadingAnchor.constraint(equalTo: searchBarContainerView.leadingAnchor, constant: 15).isActive = true
+        searchTextFieldContainer.leadingAnchor.constraint(equalTo: searchBarContainerView.leadingAnchor, constant: 23).isActive = true
         searchTextFieldContainer.heightAnchor.constraint(equalToConstant: 30).isActive = true
         searchTextFieldContainer.layoutIfNeeded()
         searchTextFieldContainer.layer.cornerRadius = searchTextFieldContainer.frame.size.height / 2
@@ -106,19 +126,25 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         searchTextField.bottomAnchor.constraint(equalTo: searchTextFieldContainer.bottomAnchor, constant: 0).isActive = true
         searchTextField.topAnchor.constraint(equalTo: searchTextFieldContainer.topAnchor, constant: 0).isActive = true
         searchTextField.trailingAnchor.constraint(equalTo: searchTextFieldContainer.trailingAnchor, constant: -10).isActive = true
-        searchTextField.leadingAnchor.constraint(equalTo: searchTextFieldContainer.leadingAnchor, constant: 10).isActive = true
+        searchTextField.leadingAnchor.constraint(equalTo: searchTextFieldContainer.leadingAnchor, constant: 15).isActive = true
         searchTextField.layoutIfNeeded()
         searchTextField.layer.cornerRadius = searchTextField.frame.size.height / 5
         searchTextField.layer.masksToBounds = true
 
-        
         // Doctor tableview
         view.addSubview(doctorsTableView)
         doctorsTableView.topAnchor.constraint(equalTo: searchBarContainerView.bottomAnchor, constant: 0).isActive = true
         doctorsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
         doctorsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
         doctorsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+        doctorsTableView.backgroundColor = UIColor(red: 153/255, green: 173/255, blue: 255/255, alpha: 0.5)
         
+        // Search Button
+        view.addSubview(searchButton)
+        searchButton.topAnchor.constraint(equalTo: searchTextFieldContainer.topAnchor, constant: 0).isActive = true
+        searchButton.bottomAnchor.constraint(equalTo: searchTextFieldContainer.bottomAnchor, constant: 0).isActive = true
+        searchButton.leadingAnchor.constraint(equalTo: searchTextField.trailingAnchor, constant: 25).isActive = true
+        searchButton.widthAnchor.constraint(equalToConstant: 75).isActive = true
         
     }
     
@@ -135,15 +161,25 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = doctorsTableView.dequeueReusableCell(withIdentifier: "customDoctorCell", for: indexPath) as! DoctorInformationCell
         
-        //cell.doctorNameLabel.text = doctorsArray[indexPath.row].name
+        // Assign our custom cell properties with our doctor object
+        cell.doctorNameLabel.text = doctorsArray[indexPath.row].name + ", " + doctorsArray[indexPath.row].title
+        cell.specialtyLabel.text = doctorsArray[indexPath.row].specialty
+        cell.locationLabel.text = doctorsArray[indexPath.row].address
+        cell.distanceLabel.text = "\(doctorsArray[indexPath.row].distance) miles away"
+        cell.descriptionLabel.text = doctorsArray[indexPath.row].description
         
         if let imageData = doctorsArray[indexPath.row].imageData {
-            cell.doctorPhotoImageView.image = UIImage(data: imageData)
-
+            cell.doctorImageView.image = UIImage(data: imageData)
         }
 
         return cell
     }
+    
+    // Set cell background color clear so that our tableview's background color is correct on loadup
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.backgroundColor = UIColor.clear
+    }
+    
     
     //------------------------------------------------------------------------------------
     //MARK - Networking
@@ -163,8 +199,10 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
                 // Create JSON object
                 let doctorListJSON: JSON = JSON(response.result.value!)
                 
+                //print(doctorListJSON)
+                
                 // Call our function to parse and append Doctor objects
-                self.parseData(json: doctorListJSON)
+                self.parseDocJSON(json: doctorListJSON)
                 
             } else {
                 print("Error \(String(describing: response.result.error))")
@@ -173,8 +211,10 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         }
     }
     
-    // Parsing JSON and appending Doctor objects to our [Doctor]
-    func parseData(json: JSON){
+    //------------------------------------------------------------------------------------
+    //MARK - Parse Doc api JSON object
+    //Parsing JSON and appending Doctor objects to our [Doctor]
+    func parseDocJSON(json: JSON){
         // Get size of practices for inner loop
         let numberOfPractices = json["data"].count
         
@@ -186,6 +226,9 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
             if numberOfDoctors > 0 {
                 for j in 0...numberOfDoctors - 1 {
                     
+                    let testDoc = json["data"][i]["doctors"][j]
+                    print(testDoc)
+                    
                     // Doctor Bio
                     // Note: Is there a better way to do this?
                     // Maybe GraphQL if allowed: https://www.raywenderlich.com/158433/getting-started-graphql-apollo-ios
@@ -195,17 +238,21 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
                     let gender = json["data"][i]["doctors"][j]["profile"]["gender"].string
                     let title = json["data"][i]["doctors"][j]["profile"]["title"].string
                     let description = json["data"][i]["doctors"][j]["profile"]["bio"].string
-                    let streetAddress = json["data"][i]["visit_address"]["street"].string! + ", " + json["data"][i]["visit_address"]["city"].string!
+                    let specialty = json["data"][i]["doctors"][j]["specialties"][0]["name"].string
+                    let latitude = json["data"][i]["lat"].float
+                    let longitude = json["data"][i]["lon"].float
+                    
+                    // Address
+                    let streetAddress = json["data"][i]["visit_address"]["city"].string!
                     let state = json["data"][i]["visit_address"]["state"].string
                     let zip = json["data"][i]["visit_address"]["zip"].string
                     let fullAddress = streetAddress + ", " + state! + " " + zip!
                     
                     // New Doctor object
-                    let newDoctor = Doctor(fName: firstName!, lName: lastName!, gender: gender!, title: title!, description: description!, clinic: clinic!, address: fullAddress, accept: true)
-
+                    let newDoctor = Doctor(fName: firstName!, lName: lastName!, gender: gender!, title: title!, description: description!, clinic: clinic!, address: fullAddress, specialty: specialty!, accept: true, lat: latitude!, long: longitude!)
                     
                     // Distance and ImageURL - Information might be missing (use optional)
-                    if let distance = json["data"][i]["distance"].float {
+                    if let distance = json["data"][i]["distance"].int {
                         newDoctor.distance = distance
                     }
                     if let imageURL = json["data"][i]["doctors"][j]["profile"]["image_url"].string {
@@ -248,6 +295,7 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
                     }
                 }
             }
+            
             // Call resume on download task - Task objects are always created in a suspended state and
             // must be sent the -resume message before they will execute. **FROM DEFINITION :)**
             downloadImage.resume()
@@ -255,7 +303,52 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         }
     }
     
-
+    //------------------------------------------------------------------------------------
+    //MARK - Search Button
+    @objc func searchButtonPressed(sender: UIButton!){
+        if sender.tag == 1 {
+            
+            //Testing
+            getDoctorsByZip(url: zipUrl, zipcode: searchTextField.text!)
+            
+        }
+    }
+    
+    //------------------------------------------------------------------------------------
+    //MARK - Get latitude and longitude from zipcode API
+    //Link - https://www.zipcodeapi.com/API
+    //This function makes an API request to
+    func getDoctorsByZip(url: String, zipcode: String){
+        
+        // Format: url + <api_key>/info.<format>/<zip_code>/<units>
+        let fullURL = url + "/\(zipApiKey)/info.json/\(zipcode)/degrees"
+        
+        Alamofire.request(fullURL, method: .get).responseJSON {
+            response in
+            
+            if response.result.isSuccess {
+                print("Success!  Location information.")
+                
+                // Create JSON object
+                let zipJSON: JSON = JSON(response.result.value!)
+                
+                // Create parameters
+                let lat = zipJSON["lat"].float!
+                let long = zipJSON["lng"].float!
+                let searchInMileRadius = "50"
+                let location = "\(lat),\(long),\(searchInMileRadius)"
+                let params = ["location": location, "user_location": self.userLocation, "user_key": self.docApiKey]
+                
+                self.doctorsArray = []
+                
+                self.getDoctorListing(url: self.docUrl, parameters: params)
+                
+            } else {
+                print("Error \(String(describing: response.result.error))")
+            }
+            
+        }
+    }
     
     //------------------------------------------------------------------------------------
     //MARK - Location manager delegate methods
@@ -275,12 +368,12 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
             let longitude = String(location.coordinate.longitude)
             let searchInMilesRadius = "50"
             let location = latitude + "," + longitude + "," + searchInMilesRadius
-            let userLocation = latitude + "," + longitude
+            userLocation = latitude + "," + longitude
             
-            params = ["location": location, "user_location": userLocation, "user_key": apiKey]
+            let params = ["location": location, "user_location": userLocation, "user_key": docApiKey]
             
             // Use our location latitude and longitude as parameter for our API call
-            getDoctorListing(url: url, parameters: params)
+            getDoctorListing(url: docUrl, parameters: params)
         }
     }
     
