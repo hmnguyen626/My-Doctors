@@ -10,6 +10,7 @@ import UIKit
 import Alamofire
 import SwiftyJSON
 import CoreLocation
+import SVProgressHUD
 
 class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate  {
     
@@ -38,6 +39,7 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         textField.font = UIFont(name: "Menlo-Regular", size: 14)
         textField.backgroundColor = UIColor.white
         textField.keyboardType = .decimalPad
+        
 
         return textField
     }()
@@ -99,6 +101,17 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         
         // UISetup
         setupUI()
+        
+        // Set up a tapRecognizer to dismiss keyboard in a different way than our login/register vc's
+        // https://stackoverflow.com/questions/27878732/swift-how-to-dismiss-number-keyboard-after-tapping-outside-of-the-textfield
+        let tapRecognizer = UITapGestureRecognizer()
+        tapRecognizer.addTarget(self, action: #selector(didTapView))
+        self.view.addGestureRecognizer(tapRecognizer)
+    }
+    
+    // End editing if a tap was recognized
+    @objc func didTapView(){
+        self.view.endEditing(true)
     }
 
     //------------------------------------------------------------------------------------
@@ -190,6 +203,8 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
     //                              doctors (name,bio,rating),
     //                              specialties
     func getDoctorListing(url: String, parameters: [String:String]){
+        SVProgressHUD.show()
+        
         Alamofire.request(url, method: .get, parameters: parameters).responseJSON {
             response in
             
@@ -199,13 +214,14 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
                 // Create JSON object
                 let doctorListJSON: JSON = JSON(response.result.value!)
                 
-                //print(doctorListJSON)
+                self.doctorsArray = []
                 
                 // Call our function to parse and append Doctor objects
                 self.parseDocJSON(json: doctorListJSON)
-                
+                SVProgressHUD.dismiss()
             } else {
                 print("Error \(String(describing: response.result.error))")
+                SVProgressHUD.dismiss()
             }
             
         }
@@ -226,30 +242,45 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
             if numberOfDoctors > 0 {
                 for j in 0...numberOfDoctors - 1 {
                     
-                    let testDoc = json["data"][i]["doctors"][j]
-                    print(testDoc)
+                    // Grabs a new doctor json object
+                    let tempDocJSON = json["data"][i]["doctors"][j]
                     
-                    // Doctor Bio
+                    // New temporary Doctor object to store future properties and append to list
+                    let newDoctor = Doctor()
+                    
                     // Note: Is there a better way to do this?
                     // Maybe GraphQL if allowed: https://www.raywenderlich.com/158433/getting-started-graphql-apollo-ios
-                    let clinic = json["data"][i]["name"].string
-                    let firstName = json["data"][i]["doctors"][j]["profile"]["first_name"].string
-                    let lastName = json["data"][i]["doctors"][j]["profile"]["last_name"].string
-                    let gender = json["data"][i]["doctors"][j]["profile"]["gender"].string
-                    let title = json["data"][i]["doctors"][j]["profile"]["title"].string
-                    let description = json["data"][i]["doctors"][j]["profile"]["bio"].string
-                    let specialty = json["data"][i]["doctors"][j]["specialties"][0]["name"].string
-                    let latitude = json["data"][i]["lat"].float
-                    let longitude = json["data"][i]["lon"].float
+                    if let firstName = tempDocJSON["profile"]["first_name"].string,
+                        let lastName = tempDocJSON["profile"]["last_name"].string {
+                        
+                        newDoctor.name = "\(firstName) \(lastName)"
+                    }
+                    if let gender = tempDocJSON["profile"]["gender"].string {
+                        newDoctor.gender = gender
+                    }
+                    if let title = tempDocJSON["profile"]["title"].string {
+                        newDoctor.title = title
+                    }
+                    if let description = tempDocJSON["profile"]["bio"].string {
+                        newDoctor.description = description
+                    }
+                    if let specialty = tempDocJSON["specialties"][0]["name"].string {
+                        newDoctor.specialty = specialty
+                    }
                     
-                    // Address
-                    let streetAddress = json["data"][i]["visit_address"]["city"].string!
-                    let state = json["data"][i]["visit_address"]["state"].string
-                    let zip = json["data"][i]["visit_address"]["zip"].string
-                    let fullAddress = streetAddress + ", " + state! + " " + zip!
-                    
-                    // New Doctor object
-                    let newDoctor = Doctor(fName: firstName!, lName: lastName!, gender: gender!, title: title!, description: description!, clinic: clinic!, address: fullAddress, specialty: specialty!, accept: true, lat: latitude!, long: longitude!)
+                    // Address and geolocation
+                    if let latitude = json["data"][i]["lat"].float {
+                        newDoctor.latitude = latitude
+                    }
+                    if let longitude = json["data"][i]["lon"].float {
+                        newDoctor.longitude = longitude
+                    }
+                    if let streetAddress = json["data"][i]["visit_address"]["city"].string,
+                        let state = json["data"][i]["visit_address"]["state"].string,
+                        let zip = json["data"][i]["visit_address"]["zip"].string {
+                        
+                        newDoctor.address = "\(streetAddress), \(state) \(zip)"
+                    }
                     
                     // Distance and ImageURL - Information might be missing (use optional)
                     if let distance = json["data"][i]["distance"].int {
@@ -259,7 +290,7 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
                         newDoctor.imageURL = imageURL
                     }
                     
-                    // Downloads the image's data from imageURL
+                    // Asynchronous process to download the image's data from imageURL
                     getImageData(doctor: newDoctor)
                     
                     // Append new doctor to [Doctor]
@@ -307,10 +338,7 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
     //MARK - Search Button
     @objc func searchButtonPressed(sender: UIButton!){
         if sender.tag == 1 {
-            
-            //Testing
             getDoctorsByZip(url: zipUrl, zipcode: searchTextField.text!)
-            
         }
     }
     
@@ -329,18 +357,19 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
             if response.result.isSuccess {
                 print("Success!  Location information.")
                 
-                // Create JSON object
+                // Create JSON object and location variable to use in parameters for api call
                 let zipJSON: JSON = JSON(response.result.value!)
+                var location = String()
                 
-                // Create parameters
-                let lat = zipJSON["lat"].float!
-                let long = zipJSON["lng"].float!
-                let searchInMileRadius = "50"
-                let location = "\(lat),\(long),\(searchInMileRadius)"
+                // Parse our json object
+                if let lat = zipJSON["lat"].float, let long = zipJSON["lng"].float {
+                    let searchInMileRadius = "50"
+                    location = "\(lat),\(long),\(searchInMileRadius)"
+                }
+                
                 let params = ["location": location, "user_location": self.userLocation, "user_key": self.docApiKey]
                 
-                self.doctorsArray = []
-                
+                // Empty our doctorsArray to prepare to append new doctors
                 self.getDoctorListing(url: self.docUrl, parameters: params)
                 
             } else {
@@ -391,5 +420,18 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         locationManager.startUpdatingLocation()
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
     }
+    
+    //------------------------------------------------------------------------------------
+    //MARK - UITextfield Delegate Methods
+
+    // Set max length of textfield to 5 characters (ZIPCODE limit)
+    // https://stackoverflow.com/questions/31363216/set-the-maximum-character-length-of-a-uitextfield-in-swift
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let maxLength = 5
+        let currentString: NSString = textField.text! as NSString
+        let newString: NSString = currentString.replacingCharacters(in: range, with: string) as NSString
+        return newString.length <= maxLength
+    }
+    
 }
 

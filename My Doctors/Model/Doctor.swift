@@ -12,12 +12,10 @@ class Doctor {
     var name: String = ""
     var gender: String = ""
     var title: String = ""
-    var description: String = ""
-    var clinic: String?
+    var description: String = "No description provided."
     var address: String = ""
-    var specialty: String = ""
-    var acceptingNewPatients : Bool?
-    var languages: [String] = []
+    var specialty: String = "No speciality listed."
+    var acceptingNewPatients : Bool
     
     // Api returns distance in miles
     var distance: Int = 0
@@ -29,26 +27,9 @@ class Doctor {
     var imageData: Data?
     
     init(){
-        self.clinic = nil
-        self.acceptingNewPatients = nil
-        self.languages = []
-    }
-    
-    convenience init(fName: String, lName: String, gender: String, title: String,
-                     description: String, clinic: String, address: String, specialty: String, accept: Bool, lat: Float, long: Float){
-        self.init()
-        
-        
-        self.name = fName + " " + lName
-        self.gender = gender
-        self.title = title
-        self.description = description
-        self.clinic = clinic
-        self.address = address
-        self.acceptingNewPatients = accept
-        self.specialty = specialty
-        self.latitude = lat
-        self.longitude = long
+        self.imageURL = nil
+        self.imageData = nil
+        self.acceptingNewPatients = true
     }
     
 }
