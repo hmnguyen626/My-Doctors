@@ -38,7 +38,7 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         textField.placeholder = "  Search by zipcode "
         textField.font = UIFont(name: "Menlo-Regular", size: 14)
         textField.backgroundColor = UIColor.white
-        textField.keyboardType = .decimalPad
+        textField.keyboardType = UIKeyboardType.decimalPad
         
 
         return textField
@@ -47,7 +47,6 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
     let doctorsTableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        
         tableView.rowHeight = 200
         
         // Register our custom cell
@@ -65,7 +64,6 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         
         // Action
         button.addTarget(self, action: #selector(searchButtonPressed), for: .touchUpInside)
-        button.tag = 1
         
         return button
     }()
@@ -102,16 +100,6 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         // UISetup
         setupUI()
         
-        // Set up a tapRecognizer to dismiss keyboard in a different way than our login/register vc's
-        // https://stackoverflow.com/questions/27878732/swift-how-to-dismiss-number-keyboard-after-tapping-outside-of-the-textfield
-        let tapRecognizer = UITapGestureRecognizer()
-        tapRecognizer.addTarget(self, action: #selector(didTapView))
-        self.view.addGestureRecognizer(tapRecognizer)
-    }
-    
-    // End editing if a tap was recognized
-    @objc func didTapView(){
-        self.view.endEditing(true)
     }
 
     //------------------------------------------------------------------------------------
@@ -159,11 +147,38 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         searchButton.leadingAnchor.constraint(equalTo: searchTextField.trailingAnchor, constant: 25).isActive = true
         searchButton.widthAnchor.constraint(equalToConstant: 75).isActive = true
         
+        // Bar Buttons
+        // https://stackoverflow.com/questions/39768600/how-to-programmatically-set-action-for-barbuttonitem-in-swift-3/39768655
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(saveButtonPressed))
+        
     }
     
     //------------------------------------------------------------------------------------
     //MARK - TableView Delegate Methods
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        searchTextField.resignFirstResponder()
+        
+        // Makes true if false, false if true
+        doctorsArray[indexPath.row].selected = !doctorsArray[indexPath.row].selected
+        
+        tableView.reloadData()
+    }
+    
+    // Fix for dynamic cell heights that behaves as "jumpy" when scrolling
+    // https://stackoverflow.com/questions/28244475/reloaddata-of-uitableview-with-dynamic-cell-heights-causes-jumpy-scrolling
+    var cellHeights: [IndexPath : CGFloat] = [:]
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        guard let height = cellHeights[indexPath] else { return 200.0 }
+        return height
+    }
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cellHeights[indexPath] = cell.frame.size.height
+        
+        // Set cell background color clear so that our tableview's background color is correct on loadup
+        cell.backgroundColor = UIColor.clear
+
+    }
     
     //------------------------------------------------------------------------------------
     //MARK - TableView Datasource Methods
@@ -185,12 +200,12 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
             cell.doctorImageView.image = UIImage(data: imageData)
         }
 
+        // Ternary operator: value = condition ? valueIfTrue: valueIfFalse
+        let green = UIColor(red: 112/255, green: 173/255, blue: 71/255, alpha: 1)
+        let lavender = UIColor(red: 125/255, green: 142/255, blue: 211/255, alpha: 1)
+        cell.containerView.backgroundColor = doctorsArray[indexPath.row].selected ? green : lavender
+
         return cell
-    }
-    
-    // Set cell background color clear so that our tableview's background color is correct on loadup
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.backgroundColor = UIColor.clear
     }
     
     
@@ -231,6 +246,18 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
     //MARK - Parse Doc api JSON object
     //Parsing JSON and appending Doctor objects to our [Doctor]
     func parseDocJSON(json: JSON){
+        
+        // Error handling if JSON object is empty
+        if !json["data"].exists() {
+            
+            let alert = UIAlertController(title: "Error", message: "No doctors found or invalid zipcode", preferredStyle: .alert)
+            let action = UIAlertAction(title: "Okay", style: .default, handler: nil)
+            alert.addAction(action)
+            present(alert, animated: true, completion: nil)
+            
+            return
+        }
+        
         // Get size of practices for inner loop
         let numberOfPractices = json["data"].count
         
@@ -335,11 +362,26 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
     }
     
     //------------------------------------------------------------------------------------
-    //MARK - Search Button
+    //MARK - Button actions
     @objc func searchButtonPressed(sender: UIButton!){
-        if sender.tag == 1 {
-            getDoctorsByZip(url: zipUrl, zipcode: searchTextField.text!)
+        // Dismiss keyboard
+        searchTextField.resignFirstResponder()
+        
+        // Makes api call to betterdoctor API using new geolocation
+        getDoctorsByZip(url: zipUrl, zipcode: searchTextField.text!)
+    }
+    
+    @objc func saveButtonPressed(sender: UIBarButtonItem!){
+        
+        // Pop to a specific viewcontroller, in our case "DashboardViewController"
+        // https://stackoverflow.com/questions/30003814/how-can-i-pop-specific-view-controller-in-swift
+        for controller in self.navigationController!.viewControllers as Array {
+            if controller.isKind(of: DashboardViewController.self) {
+                self.navigationController!.popToViewController(controller, animated: true)
+                break
+            }
         }
+        
     }
     
     //------------------------------------------------------------------------------------
@@ -423,6 +465,21 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
     
     //------------------------------------------------------------------------------------
     //MARK - UITextfield Delegate Methods
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        return true
+        
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        
+        return true
+    }
+    
+    // Dismiss keyboard when user taps view
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
 
     // Set max length of textfield to 5 characters (ZIPCODE limit)
     // https://stackoverflow.com/questions/31363216/set-the-maximum-character-length-of-a-uitextfield-in-swift

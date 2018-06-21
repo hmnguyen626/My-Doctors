@@ -16,6 +16,7 @@ class Doctor {
     var address: String = ""
     var specialty: String = "No speciality listed."
     var acceptingNewPatients : Bool
+    var selected: Bool
     
     // Api returns distance in miles
     var distance: Int = 0
@@ -30,6 +31,7 @@ class Doctor {
         self.imageURL = nil
         self.imageData = nil
         self.acceptingNewPatients = true
+        self.selected = false
     }
     
 }

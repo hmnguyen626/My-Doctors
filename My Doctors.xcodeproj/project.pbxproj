@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		10B77E8A0D07F71A2D88EE73 /* Pods_My_Doctors.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5832AD724FD2210726E11358 /* Pods_My_Doctors.framework */; };
 		A01B210620D32B4600CF3C93 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A01B210520D32B4600CF3C93 /* GoogleService-Info.plist */; };
-		A01B210820D3663A00CF3C93 /* RegisterNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01B210720D3663A00CF3C93 /* RegisterNavigationController.swift */; };
+		A01B210820D3663A00CF3C93 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01B210720D3663A00CF3C93 /* RegisterViewController.swift */; };
 		A039EC5320D987360010B53E /* DoctorInformationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A039EC5120D987360010B53E /* DoctorInformationCell.swift */; };
 		A039EC5420D987360010B53E /* DoctorInformationCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A039EC5220D987360010B53E /* DoctorInformationCell.xib */; };
 		A03A12D820D0839700F84688 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A03A12D720D0839700F84688 /* AppDelegate.swift */; };
@@ -19,14 +19,14 @@
 		A03A12E220D0839C00F84688 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A03A12E020D0839C00F84688 /* LaunchScreen.storyboard */; };
 		A03A12EF20D08C5400F84688 /* Doctor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A03A12EE20D08C5400F84688 /* Doctor.swift */; };
 		A090310420D1FDE000B7F515 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A090310320D1FDE000B7F515 /* LoginViewController.swift */; };
-		A090310820D20CCB00B7F515 /* DashboardNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A090310720D20CCB00B7F515 /* DashboardNavigationController.swift */; };
+		A090310820D20CCB00B7F515 /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A090310720D20CCB00B7F515 /* DashboardViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0348F099A9261708B6F22D9E /* Pods-My Doctors.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-My Doctors.release.xcconfig"; path = "Pods/Target Support Files/Pods-My Doctors/Pods-My Doctors.release.xcconfig"; sourceTree = "<group>"; };
 		5832AD724FD2210726E11358 /* Pods_My_Doctors.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_My_Doctors.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A01B210520D32B4600CF3C93 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		A01B210720D3663A00CF3C93 /* RegisterNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterNavigationController.swift; sourceTree = "<group>"; };
+		A01B210720D3663A00CF3C93 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		A039EC5120D987360010B53E /* DoctorInformationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorInformationCell.swift; sourceTree = "<group>"; };
 		A039EC5220D987360010B53E /* DoctorInformationCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DoctorInformationCell.xib; sourceTree = "<group>"; };
 		A03A12D420D0839700F84688 /* My Doctors.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "My Doctors.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -38,7 +38,7 @@
 		A03A12E320D0839C00F84688 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A03A12EE20D08C5400F84688 /* Doctor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Doctor.swift; sourceTree = "<group>"; };
 		A090310320D1FDE000B7F515 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
-		A090310720D20CCB00B7F515 /* DashboardNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardNavigationController.swift; sourceTree = "<group>"; };
+		A090310720D20CCB00B7F515 /* DashboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
 		D73C413A45FE8D1FEDC2DB0F /* Pods-My Doctors.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-My Doctors.debug.xcconfig"; path = "Pods/Target Support Files/Pods-My Doctors/Pods-My Doctors.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -126,8 +126,8 @@
 				A090310320D1FDE000B7F515 /* LoginViewController.swift */,
 				A03A12D720D0839700F84688 /* AppDelegate.swift */,
 				A03A12D920D0839700F84688 /* DoctorsViewController.swift */,
-				A090310720D20CCB00B7F515 /* DashboardNavigationController.swift */,
-				A01B210720D3663A00CF3C93 /* RegisterNavigationController.swift */,
+				A090310720D20CCB00B7F515 /* DashboardViewController.swift */,
+				A01B210720D3663A00CF3C93 /* RegisterViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -241,6 +241,8 @@
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
+				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 				"${BUILT_PRODUCTS_DIR}/TextFieldEffects/TextFieldEffects.framework",
@@ -252,6 +254,8 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TextFieldEffects.framework",
@@ -285,8 +289,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A01B210820D3663A00CF3C93 /* RegisterNavigationController.swift in Sources */,
-				A090310820D20CCB00B7F515 /* DashboardNavigationController.swift in Sources */,
+				A01B210820D3663A00CF3C93 /* RegisterViewController.swift in Sources */,
+				A090310820D20CCB00B7F515 /* DashboardViewController.swift in Sources */,
 				A039EC5320D987360010B53E /* DoctorInformationCell.swift in Sources */,
 				A03A12DA20D0839700F84688 /* DoctorsViewController.swift in Sources */,
 				A03A12D820D0839700F84688 /* AppDelegate.swift in Sources */,
@@ -439,10 +443,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JG98S5E585;
 				INFOPLIST_FILE = "My Doctors/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.hmdev.My-Doctors";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
@@ -458,10 +459,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JG98S5E585;
 				INFOPLIST_FILE = "My Doctors/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.hmdev.My-Doctors";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
