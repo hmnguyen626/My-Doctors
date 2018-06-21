@@ -11,6 +11,7 @@ import Alamofire
 import SwiftyJSON
 import CoreLocation
 import SVProgressHUD
+import RealmSwift
 
 class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate  {
     
@@ -194,7 +195,7 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         cell.specialtyLabel.text = doctorsArray[indexPath.row].specialty
         cell.locationLabel.text = doctorsArray[indexPath.row].address
         cell.distanceLabel.text = "\(doctorsArray[indexPath.row].distance) miles away"
-        cell.descriptionLabel.text = doctorsArray[indexPath.row].description
+        cell.descriptionLabel.text = doctorsArray[indexPath.row].bio
         
         if let imageData = doctorsArray[indexPath.row].imageData {
             cell.doctorImageView.image = UIImage(data: imageData)
@@ -282,6 +283,9 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
                         
                         newDoctor.name = "\(firstName) \(lastName)"
                     }
+                    if let npi = tempDocJSON["npi"].string {
+                        newDoctor.npi = npi
+                    }
                     if let gender = tempDocJSON["profile"]["gender"].string {
                         newDoctor.gender = gender
                     }
@@ -289,7 +293,7 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
                         newDoctor.title = title
                     }
                     if let description = tempDocJSON["profile"]["bio"].string {
-                        newDoctor.description = description
+                        newDoctor.bio = description
                     }
                     if let specialty = tempDocJSON["specialties"][0]["name"].string {
                         newDoctor.specialty = specialty
@@ -372,6 +376,7 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
     }
     
     @objc func saveButtonPressed(sender: UIBarButtonItem!){
+        saveDoctorsToRealm(list: doctorsArray)
         
         // Pop to a specific viewcontroller, in our case "DashboardViewController"
         // https://stackoverflow.com/questions/30003814/how-can-i-pop-specific-view-controller-in-swift
@@ -490,5 +495,18 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         return newString.length <= maxLength
     }
     
+    //------------------------------------------------------------------------------------
+    //MARK - Realm
+    func saveDoctorsToRealm(list: [Doctor]){
+        for doctors in list {
+            if doctors.selected {
+                doctors.writeToRealm()
+                print("\(doctors.name) saved to Realm.")
+            }
+        }
+    }
+    
+    //------------------------------------------------------------------------------------
+
 }
 

@@ -7,31 +7,66 @@
 //
 
 import Foundation
+import Realm
+import RealmSwift
 
-class Doctor {
-    var name: String = ""
-    var gender: String = ""
-    var title: String = ""
-    var description: String = "No description provided."
-    var address: String = ""
-    var specialty: String = "No speciality listed."
-    var acceptingNewPatients : Bool
-    var selected: Bool
+class Doctor : Object {
+    @objc dynamic var name: String = ""
+    @objc dynamic var gender: String = ""
+    @objc dynamic var title: String = ""
+    @objc dynamic var bio: String = "No description provided."
+    @objc dynamic var address: String = ""
+    @objc dynamic var specialty: String = "No speciality listed."
+    @objc dynamic var npi: String = ""
+    @objc dynamic var acceptingNewPatients: Bool = true
+    @objc dynamic var selected: Bool = false
     
     // Api returns distance in miles
-    var distance: Int = 0
-    var latitude: Float = 0.0
-    var longitude: Float = 0.0
+    @objc dynamic var distance: Int = 0
+    @objc dynamic var latitude: Float = 0.0
+    @objc dynamic var longitude: Float = 0.0
     
     // Doctor might not have an imageURL
-    var imageURL: String?
-    var imageData: Data?
+    @objc dynamic var imageURL: String?
+    @objc dynamic var imageData: Data?
     
-    init(){
-        self.imageURL = nil
-        self.imageData = nil
-        self.acceptingNewPatients = true
-        self.selected = false
+    // Primary key to avoid duplicates in our Realm DB
+    override static func primaryKey() -> String {
+        return "npi"
+    }
+
+    required init() {
+        super.init()
+    }
+    
+    required init(realm: RLMRealm, schema: RLMObjectSchema) {
+        super.init(realm: realm, schema: schema)
+    }
+    
+    required init(value: AnyObject, schema: RLMSchema) {
+        super.init(value: value, schema: schema)
+    }
+    
+    required init(value: Any, schema: RLMSchema) {
+        fatalError("init(value:schema:) has not been implemented")
     }
     
 }
+
+extension Doctor {
+    // Save self to our Realm
+    func writeToRealm() {
+        do {
+            try userRealm.write {
+                // Add Doctor to realm list, and if primary key exists, then update
+                userRealm.add(self, update: true)
+            }
+        } catch {
+            print(error)
+        }
+    }
+}
+
+
+
+

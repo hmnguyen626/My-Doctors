@@ -10,6 +10,8 @@ import UIKit
 import FirebaseAuth
 import TextFieldEffects
 import SVProgressHUD
+import RealmSwift
+
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
     
