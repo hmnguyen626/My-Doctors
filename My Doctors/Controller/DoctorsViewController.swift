@@ -13,10 +13,15 @@ import CoreLocation
 import SVProgressHUD
 import RealmSwift
 
-class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate  {
+class DoctorsViewController: UIViewController {
     
-    //------------------------------------------------------------------------------------
-    //MARK - Views
+    //MARK: - Variables
+    let locationManager = CLLocationManager()
+    var userLocation = ""
+    var doctorsArray = [Doctor]()
+    var cellHeights: [IndexPath : CGFloat] = [:]
+    
+    //MARK: - Views
     let searchBarContainerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -41,7 +46,6 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         textField.backgroundColor = UIColor.white
         textField.keyboardType = UIKeyboardType.decimalPad
         
-
         return textField
     }()
     
@@ -49,8 +53,6 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.rowHeight = 200
-        
-        // Register our custom cell
         tableView.register(UINib(nibName: "DoctorInformationCell", bundle: nil), forCellReuseIdentifier: "customDoctorCell")
         
         return tableView
@@ -62,15 +64,13 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         button.setTitle("Search", for: .normal)
         button.backgroundColor = UIColor(red: 153/255, green: 173/255, blue: 255/255, alpha: 0.5)
         button.titleLabel?.font = UIFont(name: "Menlo-Regular", size: 15)
-        
-        // Action
         button.addTarget(self, action: #selector(searchButtonPressed), for: .touchUpInside)
         
         return button
     }()
     
     //------------------------------------------------------------------------------------
-    //MARK - API requirements
+    //MARK: - API requirements
     //https://developer.betterdoctor.com/documentation15#/
     let docUrl = "https://api.betterdoctor.com/2016-03-01/practices"
     let docApiKey = "534c28f7bb1bea633e0ea1ad14594904"
@@ -78,12 +78,6 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
     //https://www.zipcodeapi.com/API
     let zipUrl = "https://www.zipcodeapi.com/rest"
     let zipApiKey = "IvoPuX3RLG8ycre4ABkWfAajUz8lBt0bVpQqlnLe4WXPzJEJIikc4Hq3HwyCtVJ4"
-    
-
-    // Local Variables
-    let locationManager = CLLocationManager()
-    var userLocation = ""
-    var doctorsArray = [Doctor]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -103,8 +97,7 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         
     }
 
-    //------------------------------------------------------------------------------------
-    //MARK - Setup views and their constraints
+    //MARK: - Setup views and their constraints
     private func setupUI(){
         // Search bar container
         view.addSubview(searchBarContainerView)
@@ -154,60 +147,7 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         
     }
     
-    //------------------------------------------------------------------------------------
-    //MARK - TableView Delegate Methods
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        searchTextField.resignFirstResponder()
-        
-        // Makes true if false, false if true
-        doctorsArray[indexPath.row].selected = !doctorsArray[indexPath.row].selected
-        
-        tableView.reloadData()
-    }
-    
-    // Fix for dynamic cell heights that behaves as "jumpy" when scrolling
-    // https://stackoverflow.com/questions/28244475/reloaddata-of-uitableview-with-dynamic-cell-heights-causes-jumpy-scrolling
-    var cellHeights: [IndexPath : CGFloat] = [:]
-    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard let height = cellHeights[indexPath] else { return 200.0 }
-        return height
-    }
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cellHeights[indexPath] = cell.frame.size.height
-        
-        // Set cell background color clear so that our tableview's background color is correct on loadup
-        cell.backgroundColor = UIColor.clear
-
-    }
-    
-    //------------------------------------------------------------------------------------
-    //MARK - TableView Datasource Methods
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return doctorsArray.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = doctorsTableView.dequeueReusableCell(withIdentifier: "customDoctorCell", for: indexPath) as! DoctorInformationCell
-        
-        // Assign our custom cell properties with our doctor object
-        cell.doctorNameLabel.text = doctorsArray[indexPath.row].name + ", " + doctorsArray[indexPath.row].title
-        cell.specialtyLabel.text = doctorsArray[indexPath.row].specialty
-        cell.locationLabel.text = doctorsArray[indexPath.row].address
-        cell.distanceLabel.text = "\(doctorsArray[indexPath.row].distance) miles away"
-        cell.descriptionLabel.text = doctorsArray[indexPath.row].bio
-        
-        if let imageData = doctorsArray[indexPath.row].imageData {
-            cell.doctorImageView.image = UIImage(data: imageData)
-        }
-
-        // Ternary operator: value = condition ? valueIfTrue: valueIfFalse
-        let green = UIColor(red: 112/255, green: 173/255, blue: 71/255, alpha: 1)
-        let lavender = UIColor(red: 125/255, green: 142/255, blue: 211/255, alpha: 1)
-        cell.containerView.backgroundColor = doctorsArray[indexPath.row].selected ? green : lavender
-
-        return cell
-    }
     
     
     //------------------------------------------------------------------------------------
@@ -425,9 +365,78 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
             
         }
     }
+
+    // Save to Realm
+    func saveDoctorsToRealm(list: [Doctor]){
+        for doctors in list {
+            if doctors.selected {
+                doctors.writeToRealm()
+            }
+        }
+    }
+    
+}
+
+
+extension DoctorsViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    //MARK: - TableView Delegate Methods
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        searchTextField.resignFirstResponder()
+        
+        // Makes true if false, false if true
+        doctorsArray[indexPath.row].selected = !doctorsArray[indexPath.row].selected
+        
+        tableView.reloadData()
+    }
+    
+    // Fix for dynamic cell heights that behaves as "jumpy" when scrolling
+    // https://stackoverflow.com/questions/28244475/reloaddata-of-uitableview-with-dynamic-cell-heights-causes-jumpy-scrolling
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        guard let height = cellHeights[indexPath] else { return 200.0 }
+        return height
+    }
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cellHeights[indexPath] = cell.frame.size.height
+        
+        // Set cell background color clear so that our tableview's background color is correct on loadup
+        cell.backgroundColor = UIColor.clear
+        
+    }
     
     //------------------------------------------------------------------------------------
-    //MARK - Location manager delegate methods
+    //MARK - TableView Datasource Methods
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return doctorsArray.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = doctorsTableView.dequeueReusableCell(withIdentifier: "customDoctorCell", for: indexPath) as! DoctorInformationCell
+        
+        // Assign our custom cell properties with our doctor object
+        cell.doctorNameLabel.text = doctorsArray[indexPath.row].name + ", " + doctorsArray[indexPath.row].title
+        cell.specialtyLabel.text = doctorsArray[indexPath.row].specialty
+        cell.locationLabel.text = doctorsArray[indexPath.row].address
+        cell.distanceLabel.text = "\(doctorsArray[indexPath.row].distance) miles away"
+        cell.descriptionLabel.text = doctorsArray[indexPath.row].bio
+        
+        if let imageData = doctorsArray[indexPath.row].imageData {
+            cell.doctorImageView.image = UIImage(data: imageData)
+        }
+        
+        // Ternary operator: value = condition ? valueIfTrue: valueIfFalse
+        let green = UIColor(red: 112/255, green: 173/255, blue: 71/255, alpha: 1)
+        let lavender = UIColor(red: 125/255, green: 142/255, blue: 211/255, alpha: 1)
+        cell.containerView.backgroundColor = doctorsArray[indexPath.row].selected ? green : lavender
+        
+        return cell
+    }
+    
+}
+
+//MARK: - Location manager delegate methods
+extension DoctorsViewController: CLLocationManagerDelegate {
+    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
         // Because locationManager gives us an array of CLLocations, we want to retrieve the last location
@@ -468,8 +477,11 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
     }
     
-    //------------------------------------------------------------------------------------
-    //MARK - UITextfield Delegate Methods
+}
+
+//MARK: - UITextfield Delegate Methods
+extension DoctorsViewController: UITextFieldDelegate {
+    
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         return true
         
@@ -485,7 +497,7 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
     }
-
+    
     // Set max length of textfield to 5 characters (ZIPCODE limit)
     // https://stackoverflow.com/questions/31363216/set-the-maximum-character-length-of-a-uitextfield-in-swift
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
@@ -495,18 +507,16 @@ class DoctorsViewController: UIViewController, CLLocationManagerDelegate, UITabl
         return newString.length <= maxLength
     }
     
-    //------------------------------------------------------------------------------------
-    //MARK - Realm
-    func saveDoctorsToRealm(list: [Doctor]){
-        for doctors in list {
-            if doctors.selected {
-                doctors.writeToRealm()
-                print("\(doctors.name) saved to Realm.")
-            }
-        }
-    }
-    
-    //------------------------------------------------------------------------------------
-
 }
+
+
+
+
+
+
+
+
+
+
+
 

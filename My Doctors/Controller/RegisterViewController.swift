@@ -13,8 +13,7 @@ import SVProgressHUD
 
 class RegisterViewController: UIViewController, UITextFieldDelegate {
 
-    //--------------------------------------------------------------------------------------------
-    //MARK - Declare views
+    //MARK: - Views
     let containerView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(red: 153/255, green: 179/255, blue: 255/255, alpha: 0.5)
@@ -72,8 +71,6 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         return navBarButton
     }()
     
-    //--------------------------------------------------------------------------------------------
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -85,11 +82,9 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         setupView()
         
 
-        
     }
     
-    //--------------------------------------------------------------------------------------------
-    //MARK - UISetups
+    //MARK: - UISetups
     
     private func setupView(){
         setupBackground()
@@ -137,8 +132,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-    //--------------------------------------------------------------------------------------------
-    //MARK - Textfield delegates
+    //MARK: - Textfield delegates
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         return true
@@ -156,8 +150,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         self.view.endEditing(true)
     }
     
-    //--------------------------------------------------------------------------------------------
-    //MARK - Button functions
+    //MARK: - Button functions
     
     @objc func buttonAction(sender: UIButton!){
         SVProgressHUD.show()
@@ -169,8 +162,7 @@ class RegisterViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    //--------------------------------------------------------------------------------------------
-    //MARK - Firebase Create user
+    //MARK: - Firebase Create user
     //Use FirebaseAuth method createUser() to register a new user to our database, else throw an alert w/ error description to user
     func registerNewUser(){
         

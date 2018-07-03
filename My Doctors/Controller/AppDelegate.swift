@@ -11,7 +11,7 @@ import Firebase
 import RealmSwift
 
 
-// This is our Realm
+//MARK: - Global Realm Object
 var userRealm = try! Realm()
 
 @UIApplicationMain

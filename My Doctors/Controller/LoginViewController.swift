@@ -13,10 +13,9 @@ import SVProgressHUD
 import RealmSwift
 
 
-class LoginViewController: UIViewController, UITextFieldDelegate {
+class LoginViewController: UIViewController {
     
-    //--------------------------------------------------------------------------------------------
-    //MARK - Declare views
+    //MARK: - Views
 
     let containerView: UIView = {
         let view = UIView()
@@ -32,8 +31,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         customTextField.placeholder = "Username"
         customTextField.placeholderFontScale = 0.8
         customTextField.keyboardType = .emailAddress
-        
-        //test
         customTextField.borderColor = UIColor.white
         customTextField.font = UIFont(name: "Menlo-Regular", size: 20)
         customTextField.placeholderColor = UIColor.white
@@ -48,8 +45,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         customTextField.placeholder = "Password"
         customTextField.placeholderFontScale = 0.8
         customTextField.isSecureTextEntry = true
-        
-        //test
         customTextField.borderColor = UIColor.white
         customTextField.font = UIFont(name: "Menlo-Regular", size: 20)
         customTextField.placeholderColor = UIColor.white
@@ -64,8 +59,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         button.setTitle("Login", for: .normal)
         button.backgroundColor = UIColor(white: 1, alpha: 0.6)
         button.titleLabel?.font = UIFont(name: "Menlo-Regular", size: 15)
-        
-        // Action
         button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
         button.tag = 1
         
@@ -77,8 +70,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Register", for: .normal)
         button.titleLabel?.font = UIFont(name: "Menlo-Regular", size: 15)
-
-        // Action
         button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
         button.tag = 2
         
@@ -95,8 +86,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         return label
     }()
     
-    //--------------------------------------------------------------------------------------------
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -104,13 +93,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         usernameTextField.delegate = self
         passwordTextField.delegate = self
         
-        // Set up our viewcontroller on load
         setupView()
         
     }
 
-    //--------------------------------------------------------------------------------------------
-    //MARK - NavigationBar hide/show
+    //MARK: - NavigationBar hide/show
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
@@ -127,9 +114,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         resetView()
     }
     
-    //--------------------------------------------------------------------------------------------
-    //MARK - UISetups
-
+    //MARK: - UISetups
     private func setupView(){
         setupBackground()
         setupLogin()
@@ -190,28 +175,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-    //--------------------------------------------------------------------------------------------
-    //MARK - Textfield delegates
-    
-    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        return true
-        
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        
-        return true
-    }
-    
-    // Dismiss keyboard when user taps view
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
-    }
-    
-    //--------------------------------------------------------------------------------------------
-    //MARK - Button functions
-    
+    //MARK: - Button functions
     @objc func buttonAction(sender: UIButton!){
 
         if sender.tag == 1 {
@@ -229,8 +193,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-    //--------------------------------------------------------------------------------------------
-    //MARK - Firebase Auth
+    //MARK: - Firebase Auth
     func loginUser(){
         SVProgressHUD.show()
         
@@ -260,7 +223,25 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
 }
 
-
+//MARK: - UITextField Delegate Methods
+extension LoginViewController: UITextFieldDelegate {
+    
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        return true
+        
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        
+        return true
+    }
+    
+    // Dismiss keyboard when user taps view
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+}
 
 
 
